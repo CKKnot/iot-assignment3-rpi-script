@@ -1,0 +1,17 @@
+{
+  "name": "iot-assignment3-rpi-script",
+  "version": "1.0.0",
+  "description": "node js npm modules: 1. mysql:- node.js driver for mysql",
+  "main": "conn.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node controller.js"
+  },
+  "author": "",
+  "dependencies": {
+    "moment": "^2.25.3",
+    "mqtt": "^4.1.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {}
+}
