@@ -1,8 +1,9 @@
 'use strict';
 
-var pool = require('./conn.js');
+var { pool, connectDb } = require('./conn.js');
 const mqtt = require('mqtt');
 const moment = require('moment');
+const { connect } = require('mqtt');
 //Set your MQTT topic & credential here
 const inTopic = 'iot-assignment3/data';
 const outTopic = 'iot-assignment3/response';
@@ -34,8 +35,8 @@ client.on('message', function (topic, message) {
         var dataWithTime = moment().add( 8, 'hours' ).toISOString() + "," + message.toString();
         var splitedData =  dataWithTime.split(',');
         
-        pool.query('INSERT INTO sensor SET time_stamp = ?, soil_moisture = ?, ambient_temperature = ?, light_intensity = ?, light_intensity2 = ?,  distance = ?', splitedData, function (error, results, fields){
-            if(error){
+        var query = pool.query('INSERT INTO sensor SET time_stamp = ?, soil_moisture = ?, ambient_temperature = ?, light_intensity = ?, light_intensity2 = ?,  distance = ?', splitedData);//, function (error, results, fields){
+            /*if(error){
                 console.error("SQL Insert Error: " + error);
                 return;
             }
@@ -53,6 +54,28 @@ client.on('message', function (topic, message) {
                 client.publish(outTopic, 'intruded')
             else
                 client.publish(outTopic, 'safe');
-        })
+        })*/
+        query
+            .on('fields', function(fields, index) {
+            })
+            .on('error', function(error) {
+                console.error("SQL Insert Error:\n    " + error);
+                connectDb();
+            })
+            .on('success', function(row, index) {
+                console.log("Insert query success:\n    " + row + "\n    at " + index);
+            });
+
+        if (splitedData[1] < 100){
+            client.publish(outTopic, 'dry')
+        }
+        else
+            client.publish(outTopic, 'wet')
+
+        //Check if intruder is within 10 cm out of 400
+        if (splitedData[5] < 10)
+            client.publish(outTopic, 'intruded')
+        else
+            client.publish(outTopic, 'safe');
     }
 })
