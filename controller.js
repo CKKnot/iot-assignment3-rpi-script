@@ -66,7 +66,8 @@ client.on('message', function (topic, message) {
     var regex = RegExp('^\\d{1,4},\\d{1,4},\\d{1,4},\\d{1,4},\\d{1,4}');
     if((regex.test(message.toString()))) {
         //Make our date with time +8:00 according to our Malaysian time zone
-        var dataWithTime = moment().add( 8, 'hours' ).toISOString() + "," + message.toString();
+        //var dataWithTime = moment().add( 8, 'hours' ).toISOString() + "," + message.toString();
+        var dataWithTime = moment().format("YYYY-MM-DD HH:mm:ss") + "," + message.toString();
         var splitedData =  dataWithTime.split(',');
         
         var query = pool.query('INSERT INTO sensor SET time_stamp = ?, soil_moisture = ?, ambient_temperature = ?, light_intensity = ?, light_intensity2 = ?,  distance = ?', splitedData);

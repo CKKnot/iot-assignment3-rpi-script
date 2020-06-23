@@ -3,6 +3,7 @@
 const host = "localhost";
 const user = "ckknot";
 const password = "12345678";
+const timeZone = "+8:00";
 //-----------------------------------------
 
 var mysql = require('mysql');
@@ -28,7 +29,7 @@ function connectDb(){
       console.error("  > Connection Error - conn.js: " + err + '\n');
     else {
       console.log("  > Connected to " + host + '\n');
-      conn.query("CREATE DATABASE IF NOT EXISTS sensorDb; USE sensorDb; CREATE TABLE IF NOT EXISTS sensor (time_stamp VARCHAR(255) PRIMARY KEY,soil_moisture INT,ambient_temperature INT,light_intensity INT, light_intensity2 INT, distance INT)", function(error, results, fields){
+      conn.query("CREATE DATABASE IF NOT EXISTS sensorDb; USE sensorDb; CREATE TABLE IF NOT EXISTS sensor (time_stamp TIMESTAMP, soil_moisture INT, ambient_temperature INT, light_intensity INT, light_intensity2 INT, distance INT)", function(error, results, fields){
         console.log("Database Initialization: ");
         if(error)
           console.error("  > Query Error:\n   Ccannot create database & table on targeted host: " + error);
@@ -55,7 +56,7 @@ var pool = mysql.createPool({
   user: user,
   password: password,
   multipleStatements: true,
-  timezone: "+8:00",
+  timezone: timeZone,
   database: "sensorDb",
   connectTimeout: 10000
 });
