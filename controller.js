@@ -76,16 +76,20 @@ client.on('message', function (topic, message) {
                 console.error("SQL Insert Error:\n  > " + error);
                 connectDb();
             })
+        var response = "";
         //Check if soil moisture is below 100
         if (splitedData[1] < 100){
-            client.publish(outTopic, 'dry');
+            response += "dry,";
         }
         else
-            client.publish(outTopic, 'wet');
+            response += "wet,";
         //Check if intruder is within 10 cm out of 400
         if (splitedData[5] < 10)
-            client.publish(outTopic, 'intruded');
+            response += "intruded";
         else
-            client.publish(outTopic, 'safe');
+            response += "safe";
+        if(response !== "")
+            client.publish(outTopic, response);
+        console.log("Response: " + response);
     }
 })
